@@ -1,0 +1,95 @@
+<!doctype html>
+<html lang="fa" dir="rtl">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+<meta name="theme-color" content="#f7f5f0">
+<title>دارا اندیش پرتو</title>
+<style>
+@font-face{font-family:Vazir;src:local("Vazirmatn"),local("Vazir")}*{box-sizing:border-box}
+body{margin:0;background:#f7f5f0;color:#171717;font-family:Vazir,Tahoma,Arial,sans-serif}
+:root{--gold:#c6a15b;--dark:#181818;--muted:#777}
+header{background:linear-gradient(135deg,#171717,#2a2a2a);color:white;padding:18px 18px 24px;border-radius:0 0 25px 25px}
+.top{display:flex;align-items:center;gap:12px}.logo{width:54px;height:54px;object-fit:contain;background:#f7f5f0;border-radius:14px;padding:3px}
+.brand{font-weight:800;font-size:17px}.tag{color:#d4b36f;font-size:12px;margin-top:3px}
+.search{margin-top:20px;background:#fff;color:#444;border-radius:14px;padding:12px 14px;display:flex;gap:9px;align-items:center}
+.search input{border:0;outline:0;background:transparent;width:100%;font-size:14px;font-family:inherit}
+main{padding:17px 15px 88px}.section-title{display:flex;align-items:center;justify-content:space-between;margin:19px 2px 12px;font-weight:800}
+.small{font-size:12px;color:var(--muted);font-weight:400}
+.quick{display:grid;grid-template-columns:repeat(2,1fr);gap:11px}
+.tile{background:white;border:1px solid #eee8dc;border-radius:16px;padding:15px;min-height:95px}
+.tile .ico{font-size:23px}.tile b{display:block;margin-top:8px;font-size:14px}
+.brands{display:flex;gap:9px;overflow:auto;padding:2px 0 7px}
+.chip{white-space:nowrap;border:1px solid #e3d6bc;background:white;padding:9px 14px;border-radius:22px;font-size:13px}
+.chip.active{background:#1b1b1b;color:#fff;border-color:#1b1b1b}
+.grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:11px}
+.product{background:white;border-radius:16px;border:1px solid #eee8dc;padding:13px;min-height:135px;cursor:pointer}
+.product .part-icon{height:60px;display:flex;align-items:center;justify-content:center;background:#f4f1eb;border-radius:12px;font-size:28px}
+.product h3{font-size:14px;margin:10px 0 4px}.product p{font-size:11px;color:#777;margin:0;line-height:1.7}
+.bottom{position:fixed;bottom:0;left:0;right:0;background:#fff;border-top:1px solid #eee;display:flex;justify-content:space-around;padding:10px 5px calc(10px + env(safe-area-inset-bottom));}
+.bottom button{border:0;background:none;font:inherit;font-size:12px;color:#555}
+.bottom button.active{color:#ad8741;font-weight:bold}
+.page{display:none}.page.show{display:block}
+.hero{border-radius:18px;background:#211f1c;color:white;padding:18px;margin-bottom:15px}
+.hero strong{color:#d0ad69}.list{display:flex;flex-direction:column;gap:10px}.rowitem{background:#fff;border:1px solid #eee8dc;padding:14px;border-radius:14px}
+.rowitem b{display:block;margin-bottom:5px}.rowitem small{color:#777;line-height:1.8}
+.modal{position:fixed;inset:0;background:#0007;display:none;align-items:flex-end;z-index:5}.modal.show{display:flex}
+.sheet{background:#f7f5f0;width:100%;border-radius:24px 24px 0 0;padding:22px;max-height:85vh;overflow:auto}
+.close{float:left;border:0;background:#e8e2d8;border-radius:50%;width:34px;height:34px;font-size:18px}
+.sheet h2{margin-top:5px}.gold-line{height:3px;width:45px;background:var(--gold);border-radius:5px}
+.empty{text-align:center;color:#888;padding:25px}
+</style>
+</head><body>
+<header>
+<div class="top"><img class="logo" src="logo.png"><div><div class="brand">دارا اندیش پرتو</div><div class="tag">مرجع معرفی قطعات خودروهای چینی</div></div></div>
+<div class="search">⌕ <input id="search" placeholder="نام قطعه، کد فنی یا خودرو را جستجو کنید..." oninput="renderProducts()"></div>
+</header>
+<main>
+<section id="home" class="page show">
+<div class="section-title">دسترسی سریع <span class="small">کاتالوگ آفلاین</span></div>
+<div class="quick">
+<div class="tile" onclick="showPage('cars')"><div class="ico">🚘</div><b>انتخاب خودرو</b><span class="small">قطعات بر اساس مدل</span></div>
+<div class="tile" onclick="showPage('categories')"><div class="ico">⚙️</div><b>دسته‌بندی قطعات</b><span class="small">مشاهده گروه‌ها</span></div>
+<div class="tile" onclick="showPage('favorites')"><div class="ico">☆</div><b>علاقه‌مندی‌ها</b><span class="small">قطعات ذخیره‌شده</span></div>
+<div class="tile" onclick="showPage('about')"><div class="ico">◈</div><b>درباره شرکت</b><span class="small">معرفی دارا اندیش پرتو</span></div>
+</div>
+<div class="section-title">برندهای خودرو <span class="small">انتخاب کنید</span></div>
+<div class="brands" id="brandChips"></div>
+<div class="section-title">نمونه کاتالوگ <span class="small">قابل تکمیل</span></div>
+<div class="grid" id="products"></div>
+</section>
+<section id="cars" class="page"><div class="section-title">خودروها</div><div class="hero">خودرو را انتخاب کنید تا قطعات مرتبط نمایش داده شوند.</div><div class="list" id="carList"></div></section>
+<section id="categories" class="page"><div class="section-title">دسته‌بندی قطعات</div><div class="list" id="categoryList"></div></section>
+<section id="favorites" class="page"><div class="section-title">علاقه‌مندی‌ها</div><div class="grid" id="favoriteProducts"></div></section>
+<section id="about" class="page"><div class="hero"><strong>دارا اندیش پرتو</strong><br>مرجع معرفی قطعات خودروهای چینی</div><div class="rowitem"><b>درباره ما</b><small>شرکت دارا اندیش پرتو در زمینه واردات و عرضه قطعات خودروهای چینی فعالیت می‌کند. اطلاعات قطعات و خودروهای سازگار در این کاتالوگ ارائه می‌شود.</small></div><div class="rowitem" style="margin-top:10px"><b>تماس مستقیم</b><small>شماره تماس: <span id="phone">[شماره تماس شما]</span><br>این شماره پس از دریافت، در نسخه نهایی جایگزین خواهد شد.</small></div></section>
+</main>
+<nav class="bottom">
+<button class="active" onclick="showPage('home',this)">⌂<br>خانه</button><button onclick="showPage('cars',this)">🚘<br>خودروها</button><button onclick="showPage('categories',this)">▦<br>قطعات</button><button onclick="showPage('favorites',this)">☆<br>علاقه‌مندی</button><button onclick="showPage('about',this)">◈<br>درباره</button>
+</nav>
+<div id="modal" class="modal" onclick="if(event.target.id==='modal')closeModal()"><div class="sheet"><button class="close" onclick="closeModal()">×</button><div class="gold-line"></div><div id="modalContent"></div></div></div>
+<script>
+const brands=["MVM","فونیکس","چری","لاماری","جک","کی‌ام‌سی","هایما"];
+const cars=["MVM 315","MVM X22","MVM X33","MVM X55","MVM X33 Pro","Tiggo 5","Tiggo 7","Tiggo 7 Pro","Tiggo 8","Arrizo 5","Arrizo 6","Lamari Eama","JAC S5","JAC J4","KMC T8","KMC T9","Haima S7"];
+const categories=["موتور و متعلقات","گیربکس","جلوبندی و تعلیق","سیستم ترمز","بدنه","چراغ‌ها","قطعات برقی","فیلترها و لوازم مصرفی"];
+// Demonstration entries only; replace with the company's verified catalog.
+const products=[
+{name:"نمونه قطعه — چراغ جلو",code:"کد فنی نمونه",category:"چراغ‌ها",brand:"MVM",cars:["MVM X22","MVM X33"],desc:"این مورد صرفاً نمونه نمایشی است. توضیحات واقعی، شماره فنی و سازگاری باید توسط شرکت تکمیل شود.",icon:"💡"},
+{name:"نمونه قطعه — کمک‌فنر",code:"کد فنی نمونه",category:"جلوبندی و تعلیق",brand:"فونیکس",cars:["Tiggo 7","Tiggo 7 Pro"],desc:"این مورد صرفاً نمونه نمایشی است. توضیحات واقعی، شماره فنی و سازگاری باید توسط شرکت تکمیل شود.",icon:"🔧"},
+{name:"نمونه قطعه — فیلتر",code:"کد فنی نمونه",category:"فیلترها و لوازم مصرفی",brand:"چری",cars:["Arrizo 5","Tiggo 5"],desc:"این مورد صرفاً نمونه نمایشی است. توضیحات واقعی، شماره فنی و سازگاری باید توسط شرکت تکمیل شود.",icon:"🧰"},
+{name:"نمونه قطعه — لنت ترمز",code:"کد فنی نمونه",category:"سیستم ترمز",brand:"لاماری",cars:["Lamari Eama"],desc:"این مورد صرفاً نمونه نمایشی است. توضیحات واقعی، شماره فنی و سازگاری باید توسط شرکت تکمیل شود.",icon:"⚙️"}
+];
+let selectedBrand="همه";let favorites=JSON.parse(localStorage.getItem("fav")||"[]");
+function renderChips(){brandChips.innerHTML=["همه",...brands].map(b=>`<button class="chip ${b===selectedBrand?'active':''}" onclick="selectedBrand='${b}';renderChips();renderProducts()">${b}</button>`).join("")}
+function productCard(p){return `<div class="product" onclick="openProduct('${p.name}')"><div class="part-icon">${p.icon}</div><h3>${p.name}</h3><p>${p.brand} · ${p.category}</p></div>`}
+function renderProducts(){let q=search.value.trim().toLowerCase();let list=products.filter(p=>(selectedBrand==="همه"||p.brand===selectedBrand)&&(!q||[p.name,p.code,p.category,p.brand,...p.cars].join(" ").toLowerCase().includes(q)));productsEl.innerHTML=list.length?list.map(productCard).join(""):`<div class="empty">موردی یافت نشد</div>`}
+const productsEl=document.getElementById("products");
+function renderCars(){carList.innerHTML=cars.map(c=>`<div class="rowitem" onclick="filterByCar('${c}')"><b>🚘 ${c}</b><small>نمایش قطعات مرتبط با این خودرو</small></div>`).join("")}
+function filterByCar(c){search.value=c;selectedBrand="همه";showPage("home");renderProducts()}
+function renderCategories(){categoryList.innerHTML=categories.map(c=>`<div class="rowitem" onclick="search.value='${c}';showPage('home');renderProducts()"><b>⚙️ ${c}</b><small>مشاهده قطعات این دسته</small></div>`).join("")}
+function renderFavorites(){favoriteProducts.innerHTML=products.filter(p=>favorites.includes(p.name)).map(productCard).join("")||'<div class="empty">هنوز قطعه‌ای ذخیره نشده است.</div>'}
+function openProduct(name){let p=products.find(x=>x.name===name);modalContent.innerHTML=`<h2>${p.name}</h2><div class="gold-line"></div><p><b>کد فنی:</b> ${p.code}</p><p><b>دسته‌بندی:</b> ${p.category}</p><p><b>برند:</b> ${p.brand}</p><p><b>خودروهای سازگار:</b> ${p.cars.join("، ")}</p><p><b>توضیحات:</b><br>${p.desc}</p><button class="chip" onclick="toggleFav('${p.name}')">${favorites.includes(p.name)?"★ حذف از علاقه‌مندی":"☆ افزودن به علاقه‌مندی"}</button>`;modal.classList.add("show")}
+function toggleFav(name){favorites.includes(name)?favorites=favorites.filter(x=>x!==name):favorites.push(name);localStorage.setItem("fav",JSON.stringify(favorites));openProduct(name);renderFavorites()}
+function closeModal(){modal.classList.remove("show")}
+function showPage(id,btn){document.querySelectorAll(".page").forEach(p=>p.classList.remove("show"));document.getElementById(id).classList.add("show");document.querySelectorAll(".bottom button").forEach(b=>b.classList.remove("active"));if(btn)btn.classList.add("active");if(id==="cars")renderCars();if(id==="categories")renderCategories();if(id==="favorites")renderFavorites()}
+renderChips();renderProducts();
+</script>
+</body></html>
